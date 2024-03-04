@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
 
-export function BtnOperations({title, picture}) {
+export function BtnOperations({title, picture, funcion}) {
   return (
-    <Btn>
-      <span>{picture}</span>
+    <Btn onClick={funcion}>
+      {picture}
       <span>{title}</span>
     </Btn>
   );
