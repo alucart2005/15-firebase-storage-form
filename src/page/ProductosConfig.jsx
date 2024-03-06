@@ -2,13 +2,36 @@ import styled from "styled-components";
 import photo from "../assets/sinfoto_.png";
 import { BtnOperations } from "../components/BtnOperations";
 import { FcPicture } from "react-icons/fc";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 
 export function ProductosConfig() {
+  const [fileurl, setFileurl] = useState("")
   const ref = useRef(null);
+  function subirimgStorage(e) {
+    // carga local
+    let filelocal = e.target.files;
+    let fileReaderLocal = new FileReader();
+    fileReaderLocal.readAsDataURL(filelocal[0])
+    const tipoimg = e.target.files[0]
+    if (tipoimg.type.includes("image/png")) {
+      if (fileReaderLocal && filelocal && filelocal.length) {
+        fileReaderLocal.onload= function load() {
+          setFileurl(fileReaderLocal.result)
+        }
+      }
+    }
+  }
   function openImages() {
     ref.current.click();
   }
+  const {
+    reset,
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
+  function insertar() {}
   return (
     <Container>
       <div className="sub-contenedor">
@@ -24,25 +47,40 @@ export function ProductosConfig() {
           />
           <input ref={ref} type="file" accept="image/png" />
         </div>
-        <form className="entradas">
+        <form className="entradas" onSubmit={handleSubmit(insertar)}>
           <ContainerInputs>
             <div className="subcontainer">
               <h4>Description:</h4>
-              <Inputs placeholder="Input description" />
+              <Inputs
+                placeholder="Input description"
+                type="text"
+                {...register("description", { required: true, maxLength: 20 })}
+              />
             </div>
+            {errors.description?.type === "required" && (
+              <p>Input a description</p>
+            )}
+            {errors.description?.type === "maxLength" && (
+              <p>maximum length 20 characters</p>
+            )}
           </ContainerInputs>
           <ContainerInputs>
             <div className="subcontainer">
               <h4>Price:</h4>
-              <Inputs placeholder="Input price" />
+              <Inputs
+                placeholder="Input price"
+                type="number"
+                step="0.01"
+                {...register("price", { required: true, valueAsNumber: true })}
+              />
             </div>
+            {errors.price?.type === "required" && <p>Input a number</p>}
+            {errors.price?.type === "valueAsNumber" && (
+              <p>Input a valid number</p>
+            )}
           </ContainerInputs>
           <div className="footercontent">
-            <BtnOperations
-              funcion={openImages}
-              title="Send"
-              picture={<FcPicture />}
-            />
+            <BtnOperations title="Send" picture={<FcPicture />} />
           </div>
         </form>
       </div>
@@ -85,7 +123,7 @@ const Container = styled.div`
       }
     }
     .entradas {
-      .footercontent{
+      .footercontent {
         display: flex;
         align-items: center;
         justify-content: center;
