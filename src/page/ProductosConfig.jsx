@@ -6,19 +6,30 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export function ProductosConfig() {
-  const [fileurl, setFileurl] = useState("")
+  const [fileurl, setFileurl] = useState(photo);
+  const [file, setFile] = useState([]);
+  const [estadoImg, setEstadoimg] = useState(false)
   const ref = useRef(null);
   function subirimgStorage(e) {
     // carga local
     let filelocal = e.target.files;
     let fileReaderLocal = new FileReader();
-    fileReaderLocal.readAsDataURL(filelocal[0])
-    const tipoimg = e.target.files[0]
+    fileReaderLocal.readAsDataURL(filelocal[0]);
+    const tipoimg = e.target.files[0];
+
     if (tipoimg.type.includes("image/png")) {
       if (fileReaderLocal && filelocal && filelocal.length) {
-        fileReaderLocal.onload= function load() {
-          setFileurl(fileReaderLocal.result)
-        }
+        fileReaderLocal.onload = function load() {
+          setFileurl(fileReaderLocal.result);
+        };
+        // Preparar img para el storage
+        let fileList = e.target.files;
+        let fileReader = new FileReader();
+        fileReader.readAsArrayBuffer(fileList[0]);
+        fileReader.onload = function () {
+          let imageData = fileReader.result;
+          setFile (imageData);  
+        };
       }
     }
   }
@@ -31,7 +42,15 @@ export function ProductosConfig() {
     formState: { errors },
     handleSubmit,
   } = useForm();
-  function insertar() {}
+  function insertar() {
+    const img = file.length;
+    console.log(file.length)
+    if (img !=0) {
+      setEstadoimg(false)
+    }else{
+      setEstadoimg(true)
+    }
+  }
   return (
     <Container>
       <div className="sub-contenedor">
@@ -39,14 +58,22 @@ export function ProductosConfig() {
           <h1>🙀product registration</h1>
         </div>
         <div className="pictureContainer">
-          <img src={photo} alt="" />
+          <img src={fileurl} alt="" />
           <BtnOperations
             funcion={openImages}
             title="Load Image"
             picture={<FcPicture />}
           />
-          <input ref={ref} type="file" accept="image/png" />
+          <input
+            ref={ref}
+            type="file"
+            onChange={subirimgStorage}
+            accept="image/png"
+          />
         </div>
+        {
+          estadoImg && <p style={{ textAlign: 'center', color:"red" }}>Select a image</p>
+        }
         <form className="entradas" onSubmit={handleSubmit(insertar)}>
           <ContainerInputs>
             <div className="subcontainer">
@@ -144,7 +171,7 @@ const ContainerInputs = styled.div`
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 10px;
   }
 `;
