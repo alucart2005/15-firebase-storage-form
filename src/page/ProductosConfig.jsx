@@ -4,11 +4,17 @@ import { BtnOperations } from "../components/BtnOperations";
 import { FcPicture } from "react-icons/fc";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import swal from 'sweetalert';
+import {
+  InsertarProductos,
+  EditarUrlImg,
+  SubirImgStorage,
+} from "../api/Aproductos";
 
 export function ProductosConfig() {
   const [fileurl, setFileurl] = useState(photo);
   const [file, setFile] = useState([]);
-  const [estadoImg, setEstadoimg] = useState(false)
+  const [estadoImg, setEstadoimg] = useState(false);
   const ref = useRef(null);
   function subirimgStorage(e) {
     // carga local
@@ -28,7 +34,7 @@ export function ProductosConfig() {
         fileReader.readAsArrayBuffer(fileList[0]);
         fileReader.onload = function () {
           let imageData = fileReader.result;
-          setFile (imageData);  
+          setFile(imageData);
         };
       }
     }
@@ -42,13 +48,25 @@ export function ProductosConfig() {
     formState: { errors },
     handleSubmit,
   } = useForm();
-  function insertar() {
+  async function insertar(data) {
     const img = file.length;
-    console.log(file.length)
-    if (img !=0) {
-      setEstadoimg(false)
-    }else{
-      setEstadoimg(true)
+    if (img != 0) {
+      setEstadoimg(false);
+      const p = {
+        description: data.description,
+        price: data.price,
+        icono: "-",
+      };
+      const id = await InsertarProductos(p);
+      const resptUrl = await SubirImgStorage(id, file);
+      await EditarUrlImg(id, resptUrl);
+      swal({
+        title: "Good job!",
+        text: "You clicked the button!",
+        icon: "success",
+      });
+    } else {
+      setEstadoimg(true);
     }
   }
   return (
@@ -71,9 +89,9 @@ export function ProductosConfig() {
             accept="image/png"
           />
         </div>
-        {
-          estadoImg && <p style={{ textAlign: 'center', color:"red" }}>Select a image</p>
-        }
+        {estadoImg && (
+          <p style={{ textAlign: "center", color: "red" }}>Select a image</p>
+        )}
         <form className="entradas" onSubmit={handleSubmit(insertar)}>
           <ContainerInputs>
             <div className="subcontainer">
