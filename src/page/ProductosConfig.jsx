@@ -4,14 +4,17 @@ import { BtnOperations } from "../components/BtnOperations";
 import { FcPicture } from "react-icons/fc";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import swal from 'sweetalert';
+import swal from "sweetalert";
+import { Spinner } from "../components/Spinner";
 import {
   InsertarProductos,
   EditarUrlImg,
   SubirImgStorage,
+  ValidarDatosRepetidos,
 } from "../api/Aproductos";
 
 export function ProductosConfig() {
+  const [loading, setLoading] = useState(false);
   const [fileurl, setFileurl] = useState(photo);
   const [file, setFile] = useState([]);
   const [estadoImg, setEstadoimg] = useState(false);
@@ -51,20 +54,34 @@ export function ProductosConfig() {
   async function insertar(data) {
     const img = file.length;
     if (img != 0) {
+      setLoading(true);
       setEstadoimg(false);
       const p = {
         description: data.description,
         price: data.price,
         icono: "-",
       };
-      const id = await InsertarProductos(p);
-      const resptUrl = await SubirImgStorage(id, file);
-      await EditarUrlImg(id, resptUrl);
-      swal({
-        title: "Good job!",
-        text: "You clicked the button!",
-        icon: "success",
-      });
+      const rptRepetidos = await ValidarDatosRepetidos(p);
+      if (rptRepetidos == 0) {
+        const id = await InsertarProductos(p);
+        const resptUrl = await SubirImgStorage(id, file);
+        await EditarUrlImg(id, resptUrl);
+        setLoading(false);
+        reset({ description: "", price: "" });
+        setFileurl(photo);
+        swal({
+          title: "Good job!",
+          text: "Registered product!",
+          icon: "success",
+        });
+      } else {
+        setLoading(false);
+        swal({
+          title: "Repeated data!",
+          text: "You already have a record with that description.",
+          icon: "warning",
+        });
+      }
     } else {
       setEstadoimg(true);
     }
@@ -72,6 +89,7 @@ export function ProductosConfig() {
   return (
     <Container>
       <div className="sub-contenedor">
+        {loading ? <Spinner /> : ""}
         <div className="header">
           <h1>🙀product registration</h1>
         </div>
@@ -132,6 +150,8 @@ export function ProductosConfig() {
     </Container>
   );
 }
+
+//#region STYLED COMPONENTS
 const Container = styled.div`
   position: fixed;
   top: 0;
@@ -211,3 +231,5 @@ const Inputs = styled.input`
     box-shadow: 5px 5px #888888;
   }
 `;
+
+//#endregion
