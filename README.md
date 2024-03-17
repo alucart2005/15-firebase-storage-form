@@ -1,6 +1,6 @@
 # React + Vite
 
-My first steps in React some Movie Api 😊
+My first steps in React with firebase, storage and form 😊
 Some CRUD using FireBase
 
 ## Author ✍
@@ -8,7 +8,7 @@ Some CRUD using FireBase
 **NAPOLEON ANAYA ROMERO**
 -	[https://www.linkedin.com/in/napoleon-anaya/](https://www.linkedin.com/in/napoleon-anaya/)
 
-## Preview  [https://little-crud-firebase.netlify.app/](https://little-crud-firebase.netlify.app/)
+## Preview  [https://firebase-storage-form-r.netlify.app/](https://firebase-storage-form-r.netlify.app/)
 ![..](https://github.com/alucart2005/15-firebase-storage-form/blob/main/src/assets/preview.jpg)
 
 ## Hiring 
