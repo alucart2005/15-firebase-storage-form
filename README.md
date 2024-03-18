@@ -1,7 +1,6 @@
 # React + Vite
 
 My first steps in React with firebase, storage and form 😊
-Some CRUD using FireBase
 
 ## Author ✍
 
@@ -13,8 +12,6 @@ Some CRUD using FireBase
 
 ## Hiring 
 If you want to hire me you can write to napoleonanaya@gmail.com
-
-
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
